@@ -20,6 +20,8 @@ import Home from "./pages/Home/Home";
 import About from "./pages/About/About";
 import Register from "./pages/Register/Register";
 import Login from "./pages/Login/Login";
+import CreatePost from "./pages/CreatePost/CreatePost";
+import Dashboard from "./pages/Dashboard/Dashboard";
 
 function App() {
   const [user, setUser] = useState(undefined);
@@ -48,6 +50,8 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/about" element={<About />} />
+              <Route path="/posts/create" element={<CreatePost />} />
+              <Route path="dashboard" element={<Dashboard />} />
             </Routes>
           </div>
           <Footer />
