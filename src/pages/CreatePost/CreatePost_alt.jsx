@@ -14,67 +14,60 @@ const CreatePost = () => {
 
   const { user } = useAuthValue();
 
-  const navigate = useNavigate();
-
   const { insertDocument, response } = useInsertDocument("posts");
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError("");
 
-    // validate image
+    //Validate image URL
     try {
       new URL(image);
     } catch (error) {
-      setFormError("A imagem precisa ser uma URL.");
+      setFormError("A imagem precisa de uma URL válida.");
     }
 
-    // create tags array
+    //Create tags array
     const tagsArray = tags.split(",").map((tag) => tag.trim().toLowerCase());
 
-    // check values
-    if (!title || !image || !tags || !body) {
-      setFormError("Por favor, preencha todos os campos!");
+    //Check all values
+    if (!title || !image || !body || !tags) {
+      setFormError("Preencha todos os campos.");
     }
-
-    console.log(tagsArray);
-
-    console.log({
-      title,
-      image,
-      body,
-      tags: tagsArray,
-      uid: user.uid,
-      createdBy: user.displayName,
-    });
 
     if (formError) return;
 
-    insertDocument({
+    const success = await insertDocument({
       title,
       image,
       body,
-      tags: tagsArray,
+      tagsArray,
       uid: user.uid,
       createdBy: user.displayName,
     });
+    if (!success) {
+      setFormError("Não foi possível cadastrar o post.");
+      return;
+    }
 
-    // redirect to home page
+    //Redirect to home page
     navigate("/");
   };
 
   return (
     <div className={styles.create_post}>
       <h2>Criar post</h2>
-      <p>Escreva sobre o que quiser e compartilhe o seu conhecimento!</p>
+      <p>Compartilhe seu conhecimento!</p>
       <form onSubmit={handleSubmit}>
         <label>
           <span>Título:</span>
           <input
             type="text"
-            name="text"
+            name="title"
             required
-            placeholder="Pense num bom título..."
+            placeholder="Pense em um bom título..."
             onChange={(e) => setTitle(e.target.value)}
             value={title}
           />
@@ -85,7 +78,7 @@ const CreatePost = () => {
             type="text"
             name="image"
             required
-            placeholder="Insira uma imagem que representa seu post"
+            placeholder="Insira uma imagem que representa esse post"
             onChange={(e) => setImage(e.target.value)}
             value={image}
           />
@@ -106,20 +99,20 @@ const CreatePost = () => {
             type="text"
             name="tags"
             required
-            placeholder="Insira as tags separadas por vírgula"
+            placeholder="Insira as Tags separadas por vírgulas"
             onChange={(e) => setTags(e.target.value)}
             value={tags}
           />
         </label>
-        {!response.loading && <button className="btn">Criar post!</button>}
+
+        {!response.loading && <button className="btn">Cadastrar</button>}
         {response.loading && (
           <button className="btn" disabled>
-            Aguarde.. .
+            Aguarde...
           </button>
         )}
-        {(response.error || formError) && (
-          <p className="error">{response.error || formError}</p>
-        )}
+        {response.error && <p className="error">{response.error}</p>}
+        {formError && <p className="error">{formError}</p>}
       </form>
     </div>
   );
