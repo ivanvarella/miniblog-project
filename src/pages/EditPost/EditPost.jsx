@@ -10,8 +10,6 @@ const EditPost = () => {
   const { id } = useParams();
   const { document: post } = useFetchDocument("posts", id);
 
-  console.log(post);
-
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [body, setBody] = useState("");
@@ -66,8 +64,6 @@ const EditPost = () => {
       body,
       tags: tagsArray,
     };
-
-    console.log(post);
 
     updateDocument(id, data);
 
